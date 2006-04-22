@@ -14,6 +14,7 @@
  *                                                                         *
  ***************************************************************************/
 
+
 #ifdef MY_DEBUG
 #include <stdio.h>
 #endif
@@ -194,7 +195,6 @@ int init_zebra () {
 char zebra_send_command (unsigned char command, char * options, int optlen) {
 
 #ifdef ZEBRA_HEADER_MARKER
-#define ZSERV_VERSION 1
   char *p = olsr_malloc (optlen + 5, "zebra_send_command");
   uint16_t length = optlen + 5; /* length of option + command + packet_length +
 				   marker + zserv-version */

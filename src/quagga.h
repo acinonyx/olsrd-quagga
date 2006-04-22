@@ -1,9 +1,34 @@
+/***************************************************************************
+ projekt              : olsrd-quagga
+ file                 : quagga.h  
+ usage                : header for quagga.c
+ copyright            : (C) 2006 by Immo 'FaUl' Wehrenberg
+ e-mail               : immo@chaostreff-dortmund.de
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License version 2 as     *
+ *   published by the Free Software Foundation.                            *
+ *                                                                         *
+ ***************************************************************************/
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "routing_table.h"
+#include <zebra.h>
 
+#ifndef ZEBRA_PORT
 #define ZEBRA_PORT 2600
+#endif
+
+#ifdef ZEBRA_HEADER_MARKER
+#ifndef ZSERV_VERSION
+#define ZSERV_VERSION 1
+#endif
+#endif
 
 struct ipv4_route {
   uint8_t type;
