@@ -374,10 +374,10 @@ static char *try_read (ssize_t *len) {
 	errno = 0;
       }
       else {
-	olsr_printf("OOPS, something realy wired happened: read returned %s\n",
-		    strerror(errno));
+	olsr_printf(1, "OOPS, something realy wired happened:"
+		    "read returned %s\n", strerror(errno));
 	errno = 0;
-	return -1;
+	return 0;
       }
       free (buf);
       return NULL;
