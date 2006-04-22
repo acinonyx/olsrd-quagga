@@ -733,3 +733,4 @@ int zebra_del_olsr_v4_route (struct rt_entry *r) {
   free_ipv4_route (route);
   return retval;
 }
+
