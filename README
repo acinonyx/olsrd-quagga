@@ -1,0 +1,38 @@
+---------------------------------------------------------------------
+QUAGGA PLUGIN FOR OLSRD
+by Immo 'FaUl' Wehrenberg <immo@chaostreff-dortmund.de>
+---------------------------------------------------------------------
+
+This is the Quagga Plugin for the OLSRD. 
+It allowes olsrd to redistribute from various quagga-protocols 
+as well as to export olsr-routes to quagga so that they can be
+redistributed by the quagga-routing-daemons.
+
+---------------------------------------------------------------------
+PLUGIN PARAMETERS (PlParam)
+---------------------------------------------------------------------
+
+PlParam "redistribute" "<protocol>"
+	where protocol is one of the following:
+	system, kernel, connect, static, rip, ripng, ospf, ospf6,
+	isis, bgp, hsls
+
+PlParam "ExportRoutes" "<only/both>"
+	exportes hna-routes or simply everything to quagga
+
+---------------------------------------------------------------------
+SAMPLE CONFIG
+---------------------------------------------------------------------
+
+add in /etc/olsrd.conf:
+
+LoadPlugin "olsrd_quagga.so.0.2.0"
+{
+	PlParam "redistribute" "ospf"
+	PlParam "redistribute" "bgp"
+	PlParam "ExportRoutes" "only"
+}
+
+
+---------------------------------------------------------------------
+EOF / 18.4.2006

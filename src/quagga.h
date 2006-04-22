@@ -1,0 +1,40 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "routing_table.h"
+
+#define ZEBRA_PORT 2600
+
+struct ipv4_route {
+  uint8_t type;
+  uint8_t flags;
+  uint8_t message;
+  uint8_t prefixlen;
+  uint32_t prefix;
+  uint8_t nh_count;
+  struct {
+    uint8_t type;
+    union {
+      uint32_t v4;
+    } payload;
+  } *nexthops;
+  uint8_t ind_num;
+  uint32_t *index;
+  uint32_t metric;
+  uint32_t distance;
+  struct ipv4_route *next;
+};
+
+int init_zebra (void);
+char zebra_send_command (unsigned char, char *, int );
+int zebra_add_v4_route (struct ipv4_route r);
+int zebra_delete_v4_route (struct ipv4_route r);
+void zebra_check (void*);
+int zebra_parse_packet (char*, ssize_t);
+int zebra_redistribute (unsigned char);
+int zebra_disable_redistribute (unsigned char);
+int add_hna4_route (struct ipv4_route);
+int delete_hna4_route (struct ipv4_route);
+void *my_realloc (void *, size_t, const char*);
+int zebra_add_olsr_v4_route (struct rt_entry*);
+int zebra_del_olsr_v4_route (struct rt_entry*);
