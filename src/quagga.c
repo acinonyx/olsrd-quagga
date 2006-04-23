@@ -198,6 +198,7 @@ char zebra_send_command (unsigned char command, char * options, int optlen) {
   char *p = olsr_malloc (optlen + 6, "zebra_send_command");
   uint16_t length = optlen + 6; /* length of option + command + packet_length +
 				   marker + zserv-version */
+  uint16_t cmd;
 #else
   char *p = olsr_malloc (optlen + 3, "zebra_send_command");
   uint16_t length = optlen + 3;  // length of option + command + packet_length
@@ -211,7 +212,8 @@ char zebra_send_command (unsigned char command, char * options, int optlen) {
 #ifdef ZEBRA_HEADER_MARKER
   p[2] = ZEBRA_HEADER_MARKER;
   p[3] = ZSERV_VERSION;
-  memcpy (p + 3, htons (command), 2);
+  cmd = htons (command);
+  memcpy (p + 3, &cmd, 2);
   memcpy (p + 6, options, optlen);
 #else
   p[2] = command;
