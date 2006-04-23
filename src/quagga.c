@@ -230,7 +230,7 @@ char zebra_send_command (unsigned char command, char * options, int optlen) {
       else return -1;
     }
     p = p+ret;
-  } while ((length =- ret));
+  } while ((length -= ret));
 
   return 0;
 }
@@ -306,11 +306,14 @@ int zebra_add_v4_route (struct ipv4_route r) {
   
   char *cmdopt;
   ssize_t optlen;
+  int retval;
 
   cmdopt = zebra_route_packet (r, &optlen);
 
-  return zebra_send_command (ZEBRA_IPV4_ROUTE_ADD, cmdopt, optlen);
-
+  retval = zebra_send_command (ZEBRA_IPV4_ROUTE_ADD, cmdopt, optlen);
+  free (cmdopt);
+  return retval;
+  
 }
 
 /* deletes a route from the zebra-daemon */
@@ -318,11 +321,15 @@ int zebra_delete_v4_route (struct ipv4_route r) {
   
   char *cmdopt;
   ssize_t optlen;
-  
+  int retval;
+
   cmdopt = zebra_route_packet (r, &optlen);
   
-  return zebra_send_command (ZEBRA_IPV4_ROUTE_DELETE, cmdopt, optlen);
+  retval = zebra_send_command (ZEBRA_IPV4_ROUTE_DELETE, cmdopt, optlen);
+  free (cmdopt);
 
+  return retval;
+  
 }
 
 
@@ -331,7 +338,7 @@ void zebra_check (void* foo) {
   char *data, *f;
   ssize_t len, ret;
 
-  if (!status & STATUS_CONNECTED) {
+  if (!(status & STATUS_CONNECTED)) {
     init_zebra();
   }
   data = try_read (&len);

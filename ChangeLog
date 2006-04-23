@@ -7,7 +7,8 @@
 	* Code Cleanup (removed lot of debug and test-stuff)
 	* fixed return-bug in zebra_send_command
 	* added copyright-stuff 
-	
+	* removed memleak in zebra_add/delete_v4_route
+
 0.2.0: Immo 'FaUl' Wehrenberg <immo@chaostreff-dortmund.de>:
 	* Initial release, too :-) 
 	* Added support for route-export to the zebra/quagga
