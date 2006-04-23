@@ -213,7 +213,7 @@ char zebra_send_command (unsigned char command, char * options, int optlen) {
   p[2] = ZEBRA_HEADER_MARKER;
   p[3] = ZSERV_VERSION;
   cmd = htons (command);
-  memcpy (p + 3, &cmd, 2);
+  memcpy (p + 4, &cmd, 2);
   memcpy (p + 6, options, optlen);
 #else
   p[2] = command;
