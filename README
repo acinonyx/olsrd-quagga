@@ -16,23 +16,35 @@ PlParam "redistribute" "<protocol>"
 	where protocol is one of the following:
 	system, kernel, connect, static, rip, ripng, ospf, ospf6,
 	isis, bgp, hsls
+	May be used more then once
 
 PlParam "ExportRoutes" "<only/both>"
-	exportes hna-routes or simply everything to quagga
+	exportes olsr-routes to quagga or to both, quagga and kernel
+	no routes are exportet if not set.
 
+PlParam "Localpref" "true"
+        sets the zebra SELECTED-flag on the routes exported to zebra
+	which means these routes are prefered in any case.
+
+PlParam "Distance" "0-255"
+        allowes to set Administrative distance to routes exported 
+	to zebra.
+	
 ---------------------------------------------------------------------
 SAMPLE CONFIG
 ---------------------------------------------------------------------
 
 add in /etc/olsrd.conf:
 
-LoadPlugin "olsrd_quagga.so.0.2.0"
+LoadPlugin "olsrd_quagga.so.0.2.2"
 {
 	PlParam "redistribute" "ospf"
 	PlParam "redistribute" "bgp"
 	PlParam "ExportRoutes" "only"
+        PlParam "Distance" "125" 
+	PlParam "Localpref" "false"
 }
 
 
 ---------------------------------------------------------------------
-EOF / 18.4.2006
+EOF / 8.5.2006

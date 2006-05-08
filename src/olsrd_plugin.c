@@ -26,7 +26,7 @@
 #include "kernel_routes.h"
 
 #define PLUGIN_NAME    "OLSRD quagga plugin"
-#define PLUGIN_VERSION "0.2.1"
+#define PLUGIN_VERSION "0.2.2"
 #define PLUGIN_AUTHOR  "Immo 'FaUl' Wehrenberg"
 #define MOD_DESC PLUGIN_NAME " " PLUGIN_VERSION " by " PLUGIN_AUTHOR
 
@@ -68,6 +68,20 @@ int olsrd_plugin_register_param(char *key, char *value) {
       olsr_delroute_add_function(&zebra_del_olsr_v4_route, AF_INET);
       return 1;
     }
+  }
+  else if (!strcmp(key, "Distance")) {
+    unsigned int distance = atoi (key);
+    if (distance < 255)
+      zebra_olsr_distance(distance);
+      return 1;
+  }
+  
+  else if (!strcmp(key, "LocalPref")) {
+    if (!strcmp(key, "true")) 
+      zebra_olsr_localpref();
+    else if (strcmp (key, "false"))
+      return -1;
+    return 1;
   }
   return -1;
 }

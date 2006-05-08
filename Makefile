@@ -39,7 +39,7 @@
 
 OLSRD_PLUGIN =	true
 PLUGIN_NAME =	olsrd_quagga
-PLUGIN_VER =	0.2.1
+PLUGIN_VER =	0.2.2
 
 #CFLAGS +=-DMY_DEBUG 
 CFLAGS += -g
