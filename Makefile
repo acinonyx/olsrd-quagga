@@ -52,6 +52,10 @@ CFLAGS +=-DUSE_UNIX_DOMAIN_SOCKET
 TOPDIR = ../..
 include $(TOPDIR)/Makefile.inc
 
+ifeq ($(OS),win32)
+default_target install clean:
+	@echo "**** Quagga not supportet on Windows (so it would be pointless to build the Quagga Plugin"
+else
 default_target: $(PLUGIN_FULLNAME)
 
 $(PLUGIN_FULLNAME): $(OBJS)
@@ -63,3 +67,4 @@ install:	$(PLUGIN_FULLNAME)
 
 clean:
 		rm -f $(OBJS) $(SRCS:%.c=%.d) $(PLUGIN_FULLNAME)
+endif
