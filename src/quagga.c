@@ -166,7 +166,7 @@ static int zebra_reconnect (void) {
   struct ipv4_route *tmp;
   int i;
 
-  if (zebra_connect() < 0 || !(zebra.status&STATUS_CONNECTED() 
+  if (zebra_connect() < 0 || !(zebra.status&STATUS_CONNECTED)) 
     // log: zebra-reconnect failed
     ;
   for (i = 0; ZEBRA_ROUTE_MAX - 1; i++)
