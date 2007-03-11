@@ -8,6 +8,14 @@ It allowes olsrd to redistribute from various quagga-protocols
 as well as to export olsr-routes to quagga so that they can be
 redistributed by the quagga-routing-daemons.
 
+Note Sven-Ola: You also need a source distribution of quagga-0.98.5
+or quagga-0.98.6 (that is the current stable). The quagga source tree 
+needs to be patched with quagga-0.98.6-olsr.diff, compiled and installed
+via 'make install'. Because many people will otherwise have compile
+probs, I've added 2 include files in lib/quagga/src/quagga. If you
+want to use another version of quagga, make sure to remove these
+before you compile the olsrd_quagga plugin.
+
 ---------------------------------------------------------------------
 PLUGIN PARAMETERS (PlParam)
 ---------------------------------------------------------------------
