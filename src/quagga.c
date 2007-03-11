@@ -155,7 +155,7 @@ void *my_realloc (void *buf, size_t s, const char *c) {
 }
 
 int init_zebra () {
-  if (zebra_connect() < 0 || !(zebra.status&STATUS_CONNECTED) {
+  if (zebra_connect() < 0 || !(zebra.status&STATUS_CONNECTED)) {
     olsr_exit ("AIIIII, could not connect to zebra! is zebra running?", 
 	       EXIT_FAILURE);
   }
