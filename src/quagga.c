@@ -392,12 +392,12 @@ static char* zebra_route_packet (struct ipv4_route r, ssize_t *optlen) {
     memcpy (t, r.index, sizeof *r.index * r.ind_num);
     t += sizeof r.index * r.ind_num;
   }
+  if (r.message & ZAPI_MESSAGE_DISTANCE)
+    *t++ = r.distance;
   if (r.message & ZAPI_MESSAGE_METRIC) {
     memcpy (t, &r.metric, sizeof r.metric);
     t += sizeof r.metric;
   }
-  if (r.message & ZAPI_MESSAGE_DISTANCE)
-    *t++ = r.distance;
   return cmdopt;
 }
 
