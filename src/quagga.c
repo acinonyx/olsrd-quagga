@@ -214,7 +214,7 @@ static int cmp_v4_route (struct ipv4_route a, struct ipv4_route b) {
   }
   if (a.message & ZAPI_MESSAGE_IFINDEX) {
     if (a.ind_num != b.ind_num) return 1;
-    if (memcpy (a.index, b.index, a.ind_num * sizeof *a.index)) return 1;
+    if (memcmp (a.index, b.index, a.ind_num * sizeof *a.index)) return 1;
   }
   if (a.message & ZAPI_MESSAGE_DISTANCE) 
     if (a.distance != b.distance) return 1;
