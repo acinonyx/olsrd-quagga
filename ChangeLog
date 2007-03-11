@@ -1,3 +1,8 @@
+0.2.2: Immo 'FaUl' Wehrenberg <immo@chaostreff-dortmund.de>:
+	* make selected flag configurable (do not set it by default)
+	* configurable administrative distance now
+	* make it compile (and work) on freebsd
+
 0.2.1: Immo 'FaUl' Wehrenberg <immo@chaostreff-dortmund.de>:
 	* now check (most of the) return-values of syscalls, improvement still
 	  possible...
