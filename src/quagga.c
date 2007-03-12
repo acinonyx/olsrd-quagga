@@ -492,7 +492,6 @@ static char *try_read (ssize_t *len) {
       return NULL;
     }
     *len += ret;
-
     while ((*len - l) > length) {
       l += length;
       memcpy (&length, buf + l, 2);
@@ -513,6 +512,9 @@ static char *try_read (ssize_t *len) {
 /* Parse a packet recived from zebra */
 int zebra_parse_packet (char *packet, ssize_t maxlen) {
 
+  uint16_t command;
+  int skip;
+
   /* Array of functions */
   int (*foo[ZEBRA_MESSAGE_MAX]) (char *, size_t) = {
     parse_interface_add,
@@ -526,12 +528,13 @@ int zebra_parse_packet (char *packet, ssize_t maxlen) {
     parse_ipv6_route_add
   };
 
+  uint16_t length;
+  int ret;
+
 #ifdef MY_DEBUG
   puts ("DEBUG: zebra_parse_packet");
 #endif
-  uint16_t length;
-  
-  int ret;
+
   memcpy (&length, packet, 2);
   length = ntohs (length);
   
@@ -541,8 +544,20 @@ int zebra_parse_packet (char *packet, ssize_t maxlen) {
     return maxlen;
   }
 
-  if (packet[2] - 1 < ZEBRA_MESSAGE_MAX && foo[packet[2] - 1]) { 
-    if (!(ret = foo[packet[2] - 1] (packet + 3, length - 3))) 
+#ifdef ZEBRA_HEADER_MARKER
+  if (packet[2] == 255) { // found header marker!!
+    //packet[3] == ZSERV_VERSION: FIXME: HANDLE THIS!
+    memcpy (command, packet + 4, sizeof command); // two bytes command now!
+    command-- = ntohs (command); 
+    skip = 6;
+  }
+#else
+  command = packet[2] - 1;
+  skip = 3;
+#endif
+
+  if (command < ZEBRA_MESSAGE_MAX && foo[command]) { 
+    if (!(ret = foo[command] (packet + skip, length - skip))) 
       return length;
     else printf ("DEBUG: Parse error: %d\n", ret);
   }
