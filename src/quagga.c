@@ -60,16 +60,16 @@ static struct {
 /* prototypes intern */
 static char *try_read (ssize_t *);
 static char* zebra_route_packet (struct ipv4_route r, ssize_t *);
-static int parse_interface_add (char *, size_t);
-static int parse_interface_delete (char *, size_t);
-static int parse_interface_up (char *, size_t);
-static int parse_interface_down (char *, size_t);
-static int parse_interface_address_add (char *, size_t);
-static int parse_interface_address_delete (char *, size_t);
-static int parse_ipv4_route (char *, size_t, struct ipv4_route *);
-static int ipv4_route_add (char *, size_t);
-static int ipv4_route_delete (char *, size_t);
-static int parse_ipv6_route_add (char*, size_t);
+static int parse_interface_add (unsigned char *, size_t);
+static int parse_interface_delete (unsigned char *, size_t);
+static int parse_interface_up (unsigned char *, size_t);
+static int parse_interface_down (unsigned char *, size_t);
+static int parse_interface_address_add (unsigned char *, size_t);
+static int parse_interface_address_delete (unsigned char *, size_t);
+static int parse_ipv4_route (unsigned char *, size_t, struct ipv4_route *);
+static int ipv4_route_add (unsigned char *, size_t);
+static int ipv4_route_delete (unsigned char *, size_t);
+static int parse_ipv6_route_add (unsigned char*, size_t);
 static int zebra_reconnect (void);
 static int zebra_connect (void);
 static int add_v4_route_status (struct ipv4_route r);
@@ -461,7 +461,7 @@ void zebra_check (void* foo) {
 // tries to read a packet from zebra_socket
 // if there is something to read - make sure to read whole packages
 static char *try_read (ssize_t *len) {
-  char *buf = NULL;
+  unsigned char *buf = NULL;
   ssize_t ret = 0, bsize = 0;
   uint16_t length = 0, l = 0;
   int sockstate;
@@ -510,13 +510,13 @@ static char *try_read (ssize_t *len) {
 
 
 /* Parse a packet recived from zebra */
-int zebra_parse_packet (char *packet, ssize_t maxlen) {
+int zebra_parse_packet (unsigned char *packet, ssize_t maxlen) {
 
   uint16_t command;
   int skip;
 
   /* Array of functions */
-  int (*foo[ZEBRA_MESSAGE_MAX]) (char *, size_t) = {
+  int (*foo[ZEBRA_MESSAGE_MAX]) (unsigned char *, size_t) = {
     parse_interface_add,
     parse_interface_delete,
     parse_interface_address_add,
@@ -570,38 +570,38 @@ int zebra_parse_packet (char *packet, ssize_t maxlen) {
 }
 
 
-static int parse_interface_add (char *opt, size_t len) {
+static int parse_interface_add (unsigned char *opt, size_t len) {
   //todo
   return 0;
 }
 
 
-static int parse_interface_delete (char *opt, size_t len) {
+static int parse_interface_delete (unsigned char *opt, size_t len) {
   //todo
   return 0;
 }
 
 
-static int parse_interface_address_add (char *opt, size_t len) {
+static int parse_interface_address_add (unsigned char *opt, size_t len) {
   
   //todo
   return 0;
 }
 
-static int parse_interface_up (char *opt, size_t len) {
+static int parse_interface_up (unsigned char *opt, size_t len) {
   
   //todo
   return 0;
 }
 
-static int parse_interface_down (char *opt, size_t len) {
+static int parse_interface_down (unsigned char *opt, size_t len) {
   
   //todo
   return 0;
 }
 
 
-static int parse_interface_address_delete (char *opt, size_t  len) {
+static int parse_interface_address_delete (unsigned char *opt, size_t  len) {
   //todo
   return 0;
 }
@@ -609,7 +609,7 @@ static int parse_interface_address_delete (char *opt, size_t  len) {
 
 /* Parse an ipv4-route-packet recived from zebra
  */
-static int parse_ipv4_route (char *opt, size_t len, struct ipv4_route *r) {
+static int parse_ipv4_route (unsigned char *opt, size_t len, struct ipv4_route *r) {
   int c;
 
   if (len < 4) return -1;
@@ -668,7 +668,7 @@ static int parse_ipv4_route (char *opt, size_t len, struct ipv4_route *r) {
 }
 
 
-static int ipv4_route_add (char *opt, size_t len) {
+static int ipv4_route_add (unsigned char *opt, size_t len) {
 
   struct ipv4_route r;
   int f;
@@ -683,7 +683,7 @@ static int ipv4_route_add (char *opt, size_t len) {
   return 0;
 }
 
-static int ipv4_route_delete (char *opt, size_t len) {
+static int ipv4_route_delete (unsigned char *opt, size_t len) {
   struct ipv4_route r;
   int f;
   
@@ -694,7 +694,7 @@ static int ipv4_route_delete (char *opt, size_t len) {
   
 }
 
-static int parse_ipv6_route_add (char *opt, size_t len) {
+static int parse_ipv6_route_add (unsigned char *opt, size_t len) {
   //todo
   return 0;
 }

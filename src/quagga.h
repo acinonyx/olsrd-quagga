@@ -56,7 +56,7 @@ char zebra_send_command (unsigned char, char *, int );
 int zebra_add_v4_route (struct ipv4_route r);
 int zebra_delete_v4_route (struct ipv4_route r);
 void zebra_check (void*);
-int zebra_parse_packet (char*, ssize_t);
+int zebra_parse_packet (unsigned char*, ssize_t);
 int zebra_redistribute (unsigned char);
 int zebra_disable_redistribute (unsigned char);
 int add_hna4_route (struct ipv4_route);
