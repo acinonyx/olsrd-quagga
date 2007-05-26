@@ -61,13 +61,16 @@ int olsrd_plugin_register_param(char *key, char *value) {
 	puts ("AIII, could not remove the kernel route deleter");
       olsr_addroute_add_function(&zebra_add_olsr_v4_route, AF_INET);
       olsr_delroute_add_function(&zebra_del_olsr_v4_route, AF_INET);
+      zebra_export_routes(1);
       return 1;
     }
     else if (!strcmp(value, "additional")) {
       olsr_addroute_add_function(&zebra_add_olsr_v4_route, AF_INET);
       olsr_delroute_add_function(&zebra_del_olsr_v4_route, AF_INET);
+      zebra_export_routes(1);
       return 1;
     }
+    else zebra_export_routes(0);
   }
   else if (!strcmp(key, "Distance")) {
     unsigned int distance = atoi (value);
@@ -89,7 +92,7 @@ int olsrd_plugin_register_param(char *key, char *value) {
 
 int olsrd_plugin_init() {
   if(olsr_cnf->ip_version != AF_INET) {
-    fputs("see the source - ipv6 so far not supportet\n" ,stderr);
+    fputs("see the source - ipv6 so far not supported\n" ,stderr);
     return 1;
   }
 
@@ -103,5 +106,6 @@ static void my_init(void) {
 }
 
 static void my_fini(void) {
+  zebra_cleanup();
 }
 

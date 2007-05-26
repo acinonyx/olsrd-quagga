@@ -52,6 +52,7 @@ struct ipv4_route {
 };
 
 int init_zebra (void);
+void zebra_cleanup (void);
 char zebra_send_command (unsigned char, char *, int );
 int zebra_add_v4_route (struct ipv4_route r);
 int zebra_delete_v4_route (struct ipv4_route r);
@@ -64,5 +65,6 @@ int delete_hna4_route (struct ipv4_route);
 void *my_realloc (void *, size_t, const char*);
 int zebra_add_olsr_v4_route (struct rt_entry*);
 int zebra_del_olsr_v4_route (struct rt_entry*);
-void zebra_olsr_localpref(void);
-void zebra_olsr_distance(char);
+void zebra_olsr_localpref (void);
+void zebra_olsr_distance (char);
+void zebra_export_routes (void);
