@@ -51,7 +51,7 @@ struct ipv4_route {
   struct ipv4_route *next;
 };
 
-int init_zebra (void);
+void init_zebra (void);
 void zebra_cleanup (void);
 char zebra_send_command (unsigned char, char *, int );
 int zebra_add_v4_route (struct ipv4_route r);
@@ -67,4 +67,4 @@ int zebra_add_olsr_v4_route (struct rt_entry*);
 int zebra_del_olsr_v4_route (struct rt_entry*);
 void zebra_olsr_localpref (void);
 void zebra_olsr_distance (char);
-void zebra_export_routes (void);
+void zebra_export_routes (unsigned char);

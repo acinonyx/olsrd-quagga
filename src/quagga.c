@@ -155,13 +155,15 @@ void *my_realloc (void *buf, size_t s, const char *c) {
 }
 
 void init_zebra (void) {
-  if (zebra_connect() < 0 || !(zebra.status&STATUS_CONNECTED)) {
+  zebra_connect();
+  if (!zebra.status&STATUS_CONNECTED)
     olsr_exit ("(QUAGGA) AIIIII, could not connect to zebra! is zebra running?", 
 	       EXIT_FAILURE);
-  }
 }
 
 void zebra_cleanup (void) {
+  int i;
+  struct rt_entry *tmp;
   if (zebra.options & OPTION_EXPORT) {
     for (i = 0; i < HASHSIZE; i++) {
       for (tmp = routingtable[i].next; tmp != &routingtable[i]; tmp = tmp->next)
@@ -204,13 +206,13 @@ static void zebra_connect (void) {
 
 #ifndef USE_UNIX_DOMAIN_SOCKET
   struct sockaddr_in i;
-  if (close (zebra.sock) < 0) olsr_exit ("(QUAGGA) Could not close socket!");
+  if (close (zebra.sock) < 0) olsr_exit ("(QUAGGA) Could not close socket!", EXIT_FAILURE);
   
 
   zebra.sock = socket (AF_INET,SOCK_STREAM, 0);
 #else
   struct sockaddr_un i;
-  if (close (zebra.sock) < 0) olsr_exit ("(QUAGGA) Could not close socket!");
+  if (close (zebra.sock) < 0) olsr_exit ("(QUAGGA) Could not close socket!", EXIT_FAILURE);
 
   zebra.sock = socket (AF_UNIX,SOCK_STREAM, 0);
 #endif
@@ -490,7 +492,7 @@ int zebra_parse_packet (unsigned char *packet, ssize_t maxlen) {
   length = ntohs (length);
   
   if (maxlen < length) {
-    olsr_printf ("(QUAGGA) maxlen = %d, packet_length = %d\n", maxlen, length);
+    olsr_printf (1, "(QUAGGA) maxlen = %d, packet_length = %d\n", maxlen, length);
     olsr_exit ("(QUAGGA) programmer is an idiot", EXIT_FAILURE);
   }
 
@@ -509,12 +511,12 @@ int zebra_parse_packet (unsigned char *packet, ssize_t maxlen) {
   if (command < ZEBRA_MESSAGE_MAX && foo[command]) { 
     if (!(ret = foo[command] (packet + skip, length - skip))) 
       return length;
-    else olsr_printf ("(QUAGGA) Parse error: %d\n", ret);
+    else olsr_printf (1, "(QUAGGA) Parse error: %d\n", ret);
   }
   else
-    olsr_printf ("(QUAGGA) Unknown packet type: %d\n", packet[2]);
+    olsr_printf (1, "(QUAGGA) Unknown packet type: %d\n", packet[2]);
 
-  olsr_printf ("(Quagga) RECIVED PACKET FROM ZEBRA THAT I CAN'T PARSE");
+  olsr_printf (1, "(Quagga) RECIVED PACKET FROM ZEBRA THAT I CAN'T PARSE");
 
   return length;
 }
@@ -735,7 +737,7 @@ int zebra_add_olsr_v4_route (struct rt_entry *r) {
   struct ipv4_route route;
   int retval;
   
-  route.type = ZEBRA_ROUTE_OL;SR; // OLSR
+  route.type = ZEBRA_ROUTE_OLSR; // OLSR
   route.message = ZAPI_MESSAGE_METRIC;
   route.flags = zebra.flags;
   route.prefixlen = masktoprefixlen (r->rt_mask.v4);
