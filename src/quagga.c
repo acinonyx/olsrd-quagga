@@ -203,6 +203,8 @@ static void zebra_reconnect (void) {
 
 /* Connect to the zebra-daemon, returns a socket */
 static void zebra_connect (void) {
+  
+  int ret;
 
 #ifndef USE_UNIX_DOMAIN_SOCKET
   struct sockaddr_in i;
@@ -216,8 +218,6 @@ static void zebra_connect (void) {
 
   zebra.sock = socket (AF_UNIX,SOCK_STREAM, 0);
 #endif
-
-  int ret;
 
   if (zebra.sock <0 )
     olsr_exit("(QUAGGA) Could not create socket!", EXIT_FAILURE);
@@ -406,9 +406,8 @@ void zebra_check (void* foo) {
     f = data;
     do {
       ret = zebra_parse_packet (f, len);
-      if (!ret) { // something wired happened
+      if (!ret) // something wired happened
 	olsr_exit ("(QUAGGA) Zero message length??? ", EXIT_FAILURE);
-      }
       f += ret;
     } while ((f - data) < len);
     free (data);
