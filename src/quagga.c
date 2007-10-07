@@ -172,7 +172,7 @@ void zebra_cleanup (void) {
 	zebra_del_olsr_v4_route (tmp) ;   }
   }  
 
-  for (i = 0; ZEBRA_ROUTE_MAX - 1; i++)
+  for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
     if (zebra.redistribute[i]) zebra_disable_redistribute(i + 1);
 }
 
@@ -817,7 +817,6 @@ int zebra_del_olsr_v4_route (struct rt_entry *r) {
     route.distance = zebra.distance;
   }
 
-  del_v4_route_status(route);
   free_ipv4_route (route);
   return retval;
 }
