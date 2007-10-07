@@ -45,10 +45,10 @@ int olsrd_plugin_interface_version (void) {
 }
 
 static const struct olsrd_plugin_parameters plugin_parameters[] = {
-  { .name = "redistribute", .set_plugin_parameter &set_redistribute, },
-  { .name = "ExportRoutes", .set_plugin_parameter &set_exportroutes, },
-  { .name = "Distance",     .set_plugin_parameter &set_distance,     },
-  { .name = "LocalPref",    .set_plugin_parameter &set_localpref,    },
+  { .name = "redistribute", .set_plugin_parameter = &set_redistribute, },
+  { .name = "ExportRoutes", .set_plugin_parameter = &set_exportroutes, },
+  { .name = "Distance",     .set_plugin_parameter = &set_distance,     },
+  { .name = "LocalPref",    .set_plugin_parameter = &set_localpref,    },
 };
 
 void olsrd_get_plugin_parameters (const struct olsrd_plugin_parameters **params,
@@ -60,9 +60,9 @@ void olsrd_get_plugin_parameters (const struct olsrd_plugin_parameters **params,
 static int set_redistribute (const char *value, 
 			     void *data __attribute__((unused)),
 			     unsigned int addon __attribute__((unused))) {
-  static const char *zebra_route_types[] = {"system","kernel","connect",
-					    "static","rip","ripng","ospf",
-					    "ospf6","isis","bgp","hsls"};
+  const char *zebra_route_types[] = {"system","kernel","connect",
+				     "static","rip","ripng","ospf",
+				     "ospf6","isis","bgp","hsls"};
   int *v = data;
   int i;
 
