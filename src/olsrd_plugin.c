@@ -59,14 +59,14 @@ void olsrd_get_plugin_parameters (const struct olsrd_plugin_parameters **params,
 
 static int set_redistribute (const char *value, 
 			     void *data __attribute__((unused)),
-			     unsigned int addon __attribute__((unused))) {
+			     set_plugin_parameter_addon addon __attribute__((unused))) {
   const char *zebra_route_types[] = {"system","kernel","connect",
 				     "static","rip","ripng","ospf",
 				     "ospf6","isis","bgp","hsls"};
   int *v = data;
   int i;
 
-  for (i = 0; i < ARRAYSSIZE(zebra_route_types); i++) {
+  for (i = 0; i < ARRAYS  IZE(zebra_route_types); i++) {
     if (!strcmp(value, zebra_route_types[i])) {
       zebra_redistribute(i);
       return 0;
@@ -77,7 +77,7 @@ static int set_redistribute (const char *value,
 
 static int set_exportroutes (const char *value, 
 			     void *data __attribute__((unused)),
-			     unsigned int addon __attribute__((unused))) {
+			     set_plugin_parameter_addon addon __attribute__((unused))) {
   if (!strcmp(value, "only")) {
     if (!olsr_addroute_remove_function(&olsr_ioctl_add_route, AF_INET))
       puts ("AIII, could not remove the kernel route exporter");
@@ -97,7 +97,7 @@ static int set_exportroutes (const char *value,
 }
 
 static int set_distance(const char *value, void *data __attribute__((unused)), 
-			unsigned int addon __attribute__((unused))) {
+			set_plugin_parameter_addon addon __attribute__((unused))) {
   int distance;
 
   if (set_plugin_int(value, &distance, 0)) return 1;
@@ -107,7 +107,7 @@ static int set_distance(const char *value, void *data __attribute__((unused)),
 }
  
 static int set_localpref(const char *value, void *data __attribute__((unused)), 
-			 unsigned int addon __attribute__((unused))) {
+			 set_plugin_parameter_addon addon __attribute__((unused))) {
   int b;
 
   if (set_plugin_boolean(value, &b, 0)) return 1;
