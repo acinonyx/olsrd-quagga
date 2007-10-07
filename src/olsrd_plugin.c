@@ -66,7 +66,7 @@ static int set_redistribute (const char *value,
   int *v = data;
   int i;
 
-  for (i = 0; i < ARRAYS  IZE(zebra_route_types); i++) {
+  for (i = 0; i < ARRAYSIZE(zebra_route_types); i++) {
     if (!strcmp(value, zebra_route_types[i])) {
       zebra_redistribute(i);
       return 0;
