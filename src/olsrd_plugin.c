@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "olsrd_plugin.h"
+#include "plugin_util.h"
 #include "olsr.h"
 #include "scheduler.h"
 #include "defs.h"
@@ -60,10 +61,9 @@ void olsrd_get_plugin_parameters (const struct olsrd_plugin_parameters **params,
 static int set_redistribute (const char *value, 
 			     void *data __attribute__((unused)),
 			     set_plugin_parameter_addon addon __attribute__((unused))) {
-  const char *zebra_route_types[] = {"system","kernel","connect",
-				     "static","rip","ripng","ospf",
-				     "ospf6","isis","bgp","hsls"};
-  int *v = data;
+  const unsigned char *zebra_route_types[] = {"system","kernel","connect",
+					      "static","rip","ripng","ospf",
+					      "ospf6","isis","bgp","hsls"};
   int i;
 
   for (i = 0; i < ARRAYSIZE(zebra_route_types); i++) {

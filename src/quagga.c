@@ -32,6 +32,7 @@
 #include "log.h"
 #include "defs.h"
 #include "local_hna_set.h"
+#include "routing-table.h"
 
 #ifdef USE_UNIX_DOMAIN_SOCKET
 #include <sys/un.h>
@@ -376,7 +377,7 @@ int zebra_add_v4_route (struct ipv4_route r) {
 /* deletes a route from the zebra-daemon */
 int zebra_delete_v4_route (struct ipv4_route r) {
   
-  char *cmdopt;
+  unsigned char *cmdopt;
   ssize_t optlen;
   int retval;
 
