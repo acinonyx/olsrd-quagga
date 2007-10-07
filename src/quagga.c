@@ -193,7 +193,7 @@ static void zebra_reconnect (void) {
     }
   }  
 
-  for (i = 0; ZEBRA_ROUTE_MAX - 1; i++)
+  for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
     if (zebra.redistribute[i]) zebra_redistribute(i + 1);
   /* Zebra sends us all routes of type it knows after 
      zebra_redistribute(type) */
