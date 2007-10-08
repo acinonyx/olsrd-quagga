@@ -67,4 +67,4 @@ int zebra_add_olsr_v4_route (struct rt_entry *);
 int zebra_del_olsr_v4_route (struct rt_entry *);
 void zebra_olsr_localpref (void);
 void zebra_olsr_distance (unsigned char);
-void zebra_export(unsigned char);
+void zebra_export_routes(unsigned char);

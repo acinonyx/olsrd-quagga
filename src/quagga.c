@@ -837,7 +837,7 @@ void zebra_olsr_localpref (void) {
   zebra.flags &= ZEBRA_FLAG_SELECTED;
 }
 
-void zebra_export (unsigned char t) {
+void zebra_export_routes (unsigned char t) {
   if (t)
     zebra.options |= OPTION_EXPORT;
   else
