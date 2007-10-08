@@ -78,13 +78,16 @@ static void zebra_connect (void);
 
 static uint32_t prefixlentomask (uint8_t);
 static void free_ipv4_route (struct ipv4_route);
+/* 
 static void update_olsr_zebra_routes (struct ipv4_route*, struct ipv4_route*);
 static struct ipv4_route *zebra_create_ipv4_route_table_entry (uint32_t,
 							       uint32_t,
 							       uint32_t);
 static struct ipv4_route *zebra_create_ipv4_route_table (void);
 static void zebra_free_ipv4_route_table (struct ipv4_route*);
-static uint8_t masktoprefixlen (uint32_t);
+*/
+
+/*static uint8_t masktoprefixlen (uint32_t);*/
 
 
 #ifdef MY_DEBUG
@@ -719,6 +722,7 @@ static void free_ipv4_route (struct ipv4_route r) {
 
 }
 
+/*
 static uint8_t masktoprefixlen (uint32_t mask) {
   
   uint8_t prefixlen = 0;
@@ -730,6 +734,7 @@ static uint8_t masktoprefixlen (uint32_t mask) {
   return prefixlen;
   
 }
+*/
 
 int zebra_add_olsr_v4_route (struct rt_entry *r) {
   
@@ -817,6 +822,8 @@ int zebra_del_olsr_v4_route (struct rt_entry *r) {
     route.message |= ZAPI_MESSAGE_DISTANCE;
     route.distance = zebra.distance;
   }
+
+  retval = zebra_delete_v4_route(route);
 
   free_ipv4_route (route);
   return retval;
