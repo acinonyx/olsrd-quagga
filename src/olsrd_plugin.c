@@ -61,7 +61,7 @@ void olsrd_get_plugin_parameters (const struct olsrd_plugin_parameters **params,
 static int set_redistribute (const char *value, 
 			     void *data __attribute__((unused)),
 			     set_plugin_parameter_addon addon __attribute__((unused))) {
-  const unsigned char *zebra_route_types[] = {"system","kernel","connect",
+  const char *zebra_route_types[] = {"system","kernel","connect",
 					      "static","rip","ripng","ospf",
 					      "ospf6","isis","bgp","hsls"};
   int i;
@@ -100,7 +100,7 @@ static int set_distance(const char *value, void *data __attribute__((unused)),
 			set_plugin_parameter_addon addon __attribute__((unused))) {
   int distance;
 
-  if (set_plugin_int(value, &distance, 0)) return 1;
+  if (set_plugin_int(value, &distance, addon)) return 1;
   if (distance < 0 || distance > 255) return 1;
   zebra_olsr_distance(distance);
   return 0;
@@ -110,7 +110,7 @@ static int set_localpref(const char *value, void *data __attribute__((unused)),
 			 set_plugin_parameter_addon addon __attribute__((unused))) {
   int b;
 
-  if (set_plugin_boolean(value, &b, 0)) return 1;
+  if (set_plugin_boolean(value, &b, addon)) return 1;
   if (b) zebra_olsr_localpref();
   return 0;
 }

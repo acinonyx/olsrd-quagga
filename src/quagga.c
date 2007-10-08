@@ -32,7 +32,7 @@
 #include "log.h"
 #include "defs.h"
 #include "local_hna_set.h"
-#include "routing-table.h"
+#include "routing_table.h"
 
 #ifdef USE_UNIX_DOMAIN_SOCKET
 #include <sys/un.h>
