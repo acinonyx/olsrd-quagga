@@ -167,9 +167,9 @@ void zebra_cleanup (void) {
   struct rt_entry *tmp;
   
   if (zebra.options & OPTION_EXPORT) {
-    OLSR_FOR_ALL_RT_ENTRYS(tmp) {
+    OLSR_FOR_ALL_RT_ENTRIES(tmp) {
       zebra_del_olsr_v4_route(tmp);
-    } OLSR_FOR_ALL_RT_ENTRYS_END(tmp);
+    } OLSR_FOR_ALL_RT_ENTRIES_END(tmp);
   }
 
   for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
@@ -301,7 +301,7 @@ static unsigned char* zebra_route_packet (struct ipv4_route r,
   unsigned char *cmdopt, *t;
   *optlen = 4; // first: type, flags, message, prefixlen
   *optlen += r.prefixlen / 8 + (r.prefixlen % 8 ? 1 : 0); // + prefix
-  if (r.message & ZAPI_MESSAGE_NEXTHOP)
+  if (r.message & ZAPI_MESSAGE_NEXTHOP) {
     if (r.nexthops->type == ZEBRA_NEXTHOP_IPV4 
 	|| r.nexthops->type == ZEBRA_NEXTHOP_IPV4_IFINDEX){
       *optlen += (sizeof r.nexthops->payload.v4 
@@ -309,6 +309,7 @@ static unsigned char* zebra_route_packet (struct ipv4_route r,
     }
     else if (r.nexthops->type == 0) 
       *optlen += 5;
+  }
   if (r.message & ZAPI_MESSAGE_IFINDEX)
     *optlen += r.ind_num * sizeof *r.index + 1;
   if (r.message & ZAPI_MESSAGE_DISTANCE)
@@ -821,7 +822,7 @@ int zebra_del_olsr_v4_route (struct rt_entry *r) {
   return retval;
 }
 
-void zebra_olsr_distance (char dist) {
+void zebra_olsr_distance (unsigned char dist) {
   zebra.distance = dist;
 }
 
@@ -829,7 +830,7 @@ void zebra_olsr_localpref (void) {
   zebra.flags &= ZEBRA_FLAG_SELECTED;
 }
 
-void zebra_export (char t) {
+void zebra_export (unsigned char t) {
   if (t)
     zebra.options |= OPTION_EXPORT;
   else

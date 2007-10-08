@@ -64,7 +64,7 @@ static int set_redistribute (const char *value,
   const char *zebra_route_types[] = {"system","kernel","connect",
 					      "static","rip","ripng","ospf",
 					      "ospf6","isis","bgp","hsls"};
-  int i;
+  unsigned int i;
 
   for (i = 0; i < ARRAYSIZE(zebra_route_types); i++) {
     if (!strcmp(value, zebra_route_types[i])) {
