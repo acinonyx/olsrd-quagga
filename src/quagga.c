@@ -501,8 +501,8 @@ int zebra_parse_packet (unsigned char *packet, ssize_t maxlen) {
 #ifdef ZEBRA_HEADER_MARKER
   if (packet[2] == 255) { // found header marker!!
     //packet[3] == ZSERV_VERSION: FIXME: HANDLE THIS!
-    memcpy (command, packet + 4, sizeof command); // two bytes command now!
-    command-- = ntohs (command); 
+    memcpy (&command, packet + 4, sizeof command); // two bytes command now!
+    command = ntohs (command) - 1; 
     skip = 6;
   }
 #else
