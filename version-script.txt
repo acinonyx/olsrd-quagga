@@ -2,7 +2,7 @@ VERS_1.0
 {
   global:
     olsrd_plugin_interface_version;
-    olsrd_plugin_register_param;
+    olsrd_get_plugin_parameters;
     olsrd_plugin_init;
 
   local:
