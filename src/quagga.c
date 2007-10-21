@@ -160,7 +160,7 @@ void *my_realloc (void *buf, size_t s, const char *c) {
 
 void init_zebra (void) {
   zebra_connect();
-  if (!zebra.status&STATUS_CONNECTED)
+  if (!(zebra.status&STATUS_CONNECTED))
     olsr_exit ("(QUAGGA) AIIIII, could not connect to zebra! is zebra running?", 
 	       EXIT_FAILURE);
 }
@@ -185,7 +185,7 @@ static void zebra_reconnect (void) {
   int i;
 
   zebra_connect();
-  if (!zebra.status & STATUS_CONNECTED) return; // try again next time
+  if (!(zebra.status & STATUS_CONNECTED)) return; // try again next time
 
   if (zebra.options & OPTION_EXPORT) {
     OLSR_FOR_ALL_RT_ENTRIES(tmp) {
@@ -244,19 +244,24 @@ static void zebra_connect (void) {
 unsigned char zebra_send_command (unsigned char command, 
                                   unsigned char *options, int optlen) {
 
+  char *p, *pnt;
+  uint16_t len;
+  int ret;
+
 #ifdef ZEBRA_HEADER_MARKER
-  char *p = olsr_malloc (optlen + 6, "zebra_send_command");
+  uint16_t cmd;
   uint16_t length = optlen + 6; /* length of option + command + packet_length +
 				   marker + zserv-version */
-  uint16_t cmd;
 #else
-  char *p = olsr_malloc (optlen + 3, "zebra_send_command");
   uint16_t length = optlen + 3;  // length of option + command + packet_length
-#endif
-  char *pnt = p;
-  int ret;
+#endif  
+
+  if (!(zebra.status & STATUS_CONNECTED)) return 0;
+
+  p = olsr_malloc (length, "zebra_send_command");
+  pnt = p;
   
-  uint16_t len = htons(length);
+  len = htons(length);
 
   memcpy (p, &len, 2);
 
@@ -265,11 +270,10 @@ unsigned char zebra_send_command (unsigned char command,
   p[3] = ZSERV_VERSION;
   cmd = htons (command);
   memcpy (p + 4, &cmd, 2);
-  memcpy (p + 6, options, optlen);
 #else
   p[2] = command;
-  memcpy (p + 3, options, optlen);
 #endif
+  memcpy (p + length-optlen, options, optlen);
 
   errno = 0;
 
@@ -441,9 +445,16 @@ static unsigned char *try_read (ssize_t *len) {
       free (buf);
       return NULL;
     }
-    if (ret < 0 && errno != EAGAIN) { // oops - we got disconnected
-      olsr_printf (1, "(QUAGGA) Disconnected from zebra\n");
-      zebra.status &= ~STATUS_CONNECTED;
+
+    if (ret < 0) {
+      if (errno == EAGAIN) 
+	continue;
+      else { // oops - we got disconnected
+	olsr_printf (1, "(QUAGGA) Disconnected from zebra\n");
+	zebra.status &= ~STATUS_CONNECTED;
+	free(buf);
+	return NULL;
+      }
     }
 
     *len += ret;
@@ -724,7 +735,7 @@ static void free_ipv4_route (struct ipv4_route r) {
 
 /*
 static uint8_t masktoprefixlen (uint32_t mask) {
-  
+ 
   uint8_t prefixlen = 0;
 
   mask = htonl (mask);
@@ -792,13 +803,13 @@ int zebra_del_olsr_v4_route (struct rt_entry *r) {
   route.flags = zebra.flags;
   route.prefixlen = r->rt_dst.prefix_len;
   route.prefix = r->rt_dst.prefix.v4;
-  if ((r->rt_best->rtp_nexthop.gateway.v4 == r->rt_dst.prefix.v4 && 
+  if ((r->rtp_nexthop.gateway.v4 == r->rt_dst.prefix.v4 && 
        route.prefixlen == 32)){
     route.message |= ZAPI_MESSAGE_IFINDEX;
     route.ind_num = 1;
     route.index = olsr_malloc (sizeof *route.index, 
 			       "zebra_add_olsr_v4_route");
-    *route.index = htonl (r->rt_best->rtp_nexthop.iif_index);
+    *route.index = htonl (r->rtp_nexthop.iif_index);
     route.nexthops = olsr_malloc (sizeof route.nexthops->type +
 				  sizeof route.nexthops->payload,
 				  "zebra_add_olsr_v4_route");
@@ -813,10 +824,9 @@ int zebra_del_olsr_v4_route (struct rt_entry *r) {
 				   sizeof route.nexthops->payload), 
 				  "zebra_add_olsr_v4_route");
     route.nexthops->type = ZEBRA_NEXTHOP_IPV4;
-    route.nexthops->payload.v4 = r->rt_best->rtp_nexthop.gateway.v4;
+    route.nexthops->payload.v4 = r->rtp_nexthop.gateway.v4;
   }
-  route.metric = r->rt_best->rtp_metric.hops;
-  route.metric = htonl (route.metric);
+  route.metric = 0;
   
   if (zebra.distance) {
     route.message |= ZAPI_MESSAGE_DISTANCE;
