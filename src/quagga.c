@@ -779,7 +779,7 @@ int zebra_add_olsr_v4_route (const struct rt_entry *r) {
   return retval;
 }
 
-int zebra_del_olsr_v4_route (struct rt_entry *r) {
+int zebra_del_olsr_v4_route (const struct rt_entry *r) {
   
   struct ipv4_route route;
   int retval;
