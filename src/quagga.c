@@ -742,7 +742,7 @@ int zebra_add_olsr_v4_route (const struct rt_entry *r) {
   route.flags = zebra.flags;
   route.prefixlen = r->rt_dst.prefix_len;
   route.prefix = r->rt_dst.prefix.v4.s_addr;
-  if ((r->rt_nexthop.gateway.v4.s_addr == r->rt_dst.prefix.v4.s_addr && 
+  if ((r->rt_best->rtp_nexthop.gateway.v4.s_addr == r->rt_dst.prefix.v4.s_addr && 
        route.prefixlen == 32)) {
     route.message |= ZAPI_MESSAGE_IFINDEX | ZAPI_MESSAGE_NEXTHOP;
     route.ind_num = 1;
@@ -788,13 +788,13 @@ int zebra_del_olsr_v4_route (const struct rt_entry *r) {
   route.flags = zebra.flags;
   route.prefixlen = r->rt_dst.prefix_len;
   route.prefix = r->rt_dst.prefix.v4.s_addr;
-  if ((r->rtp_nexthop.gateway.v4.s_addr == r->rt_dst.prefix.v4.s_addr && 
+  if ((r->rt_nexthop.gateway.v4.s_addr == r->rt_dst.prefix.v4.s_addr && 
        route.prefixlen == 32)){
     route.message |= ZAPI_MESSAGE_IFINDEX;
     route.ind_num = 1;
     route.index = olsr_malloc (sizeof *route.index, 
 			       "zebra_add_olsr_v4_route");
-    *route.index = htonl (r->rtp_nexthop.iif_index);
+    *route.index = htonl (r->rt_nexthop.iif_index);
     route.nexthops = olsr_malloc (sizeof route.nexthops->type +
 				  sizeof route.nexthops->payload,
 				  "zebra_add_olsr_v4_route");
