@@ -459,14 +459,12 @@ static unsigned char *try_read (ssize_t *len) {
     }
 
     if (ret < 0) {
-      if (errno == EAGAIN) 
-	continue;
-      else { // oops - we got disconnected
-	olsr_printf (1, "(QUAGGA) Disconnected from zebra\n");
-	zebra.status &= ~STATUS_CONNECTED;
-	free(buf);
-	return NULL;
+      if (errno != EAGAIN) { // oops - we got disconnected
+        olsr_printf (1, "(QUAGGA) Disconnected from zebra\n");
+        zebra.status &= ~STATUS_CONNECTED;
       }
+      free (buf);
+      return NULL;
     }
 
     *len += ret;
