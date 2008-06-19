@@ -25,7 +25,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <quagga/zebra.h>
 
 #include "quagga.h"
 #include "olsr.h"
@@ -37,6 +36,20 @@
 #include <sys/un.h>
 #define ZEBRA_SOCKET "/var/run/quagga/zserv.api"
 #endif
+
+#define ZEBRA_IPV4_ROUTE_ADD		7
+#define ZEBRA_IPV4_ROUTE_DELETE		8
+#define ZEBRA_REDISTRIBUTE_ADD		11
+#define ZEBRA_REDISTRIBUTE_DELETE	12
+#define ZEBRA_MESSAGE_MAX		23
+
+#define ZEBRA_ROUTE_OLSR		11
+#define ZEBRA_ROUTE_MAX			12
+
+#define ZEBRA_FLAG_SELECTED		0x10
+
+#define ZEBRA_NEXTHOP_IPV4		3
+#define ZEBRA_NEXTHOP_IPV4_IFINDEX	4
 
 #define ZAPI_MESSAGE_NEXTHOP  0x01
 #define ZAPI_MESSAGE_IFINDEX  0x02
