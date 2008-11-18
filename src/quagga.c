@@ -292,7 +292,7 @@ unsigned char zebra_send_command (unsigned char command,
   do {
     ret = write (zebra.sock, p, length);
     if (ret < 0) {
-      if (errno == EINTR) {
+      if ((errno == EINTR) || (errno == EAGAIN)) {
 	errno = 0;
 	continue;
       }
