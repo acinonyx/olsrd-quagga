@@ -77,7 +77,7 @@ static struct {
 
 
 /* prototypes intern */
-static unsigned char* zebra_route_packet (uint32_t, struct ipv4_route *);
+static unsigned char* zebra_route_packet (uint16_t, struct ipv4_route *);
 #if 0
 static unsigned char *try_read (ssize_t *);
 static int parse_interface_add (unsigned char *, size_t);
@@ -245,7 +245,7 @@ unsigned char zebra_send_command (unsigned char *options) {
 
 /* Creates a Route-Packet-Payload, needs address, netmask, nexthop,
    distance, and a pointer of an size_t */
-static unsigned char* zebra_route_packet (uint32_t cmd, struct ipv4_route *r) {
+static unsigned char* zebra_route_packet (uint16_t cmd, struct ipv4_route *r) {
 
   int count;
   uint8_t len;
