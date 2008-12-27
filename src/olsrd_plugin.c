@@ -36,25 +36,19 @@
 static void __attribute__ ((constructor)) my_init(void);
 static void __attribute__ ((destructor)) my_fini(void);
 
-#if 0
 static set_plugin_parameter set_redistribute;
-#endif
 static set_plugin_parameter set_exportroutes;
 static set_plugin_parameter set_distance;
 static set_plugin_parameter set_localpref;
 
-#if 0
 static struct olsr_cookie_info *event_timer_cookie;
-#endif
 
 int olsrd_plugin_interface_version (void) {
   return PLUGIN_INTERFACE_VERSION;
 }
 
 static const struct olsrd_plugin_parameters plugin_parameters[] = {
-#if 0
   { .name = "redistribute", .set_plugin_parameter = &set_redistribute, },
-#endif
   { .name = "ExportRoutes", .set_plugin_parameter = &set_exportroutes, },
   { .name = "Distance",     .set_plugin_parameter = &set_distance,     },
   { .name = "LocalPref",    .set_plugin_parameter = &set_localpref,    },
@@ -66,7 +60,6 @@ void olsrd_get_plugin_parameters (const struct olsrd_plugin_parameters **params,
   *size = ARRAYSIZE(plugin_parameters);
 }
 
-#if 0
 static int set_redistribute (const char *value,
 			     void *data __attribute__((unused)),
 			     set_plugin_parameter_addon addon __attribute__((unused))) {
@@ -76,14 +69,12 @@ static int set_redistribute (const char *value,
   unsigned int i;
 
   for (i = 0; i < ARRAYSIZE(zebra_route_types); i++) {
-    if (!strcmp(value, zebra_route_types[i])) {
-      zebra_redistribute(i);
-      return 0;
-    }
+    if (!strcmp(value, zebra_route_types[i]))
+      if (zebra_redistribute (i)) return 1;
   }
-  return 1;
+
+  return 0;
 }
-#endif
 
 static int set_exportroutes (const char *value,
 			     void *data __attribute__((unused)),
@@ -128,12 +119,10 @@ int olsrd_plugin_init(void) {
     return 1;
   }
 
-#if 0
   event_timer_cookie = olsr_alloc_cookie("Quagga: Event", OLSR_COOKIE_TYPE_TIMER);
 
   olsr_start_timer(1 * MSEC_PER_SEC, 0, OLSR_TIMER_PERIODIC,
-                   &zebra_check, NULL, event_timer_cookie->ci_id);
-#endif
+                   &zebra_parse, NULL, event_timer_cookie->ci_id);
 
   return 0;
 }
