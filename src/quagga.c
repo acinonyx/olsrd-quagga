@@ -265,7 +265,6 @@ void zebra_parse (void* foo __attribute__((unused))) {
   data = try_read (&len);
   if (data) {
     f = data;
-      OLSR_PRINTF(1,"length zebra_parse %u\n", (unsigned int) len);
     do {
       memcpy (&length, f, sizeof length);
       length = ntohs (length);
@@ -400,8 +399,6 @@ static struct zebra_route *zebra_parse_route (unsigned char *opt) {
     r->metric = ntohl (r->metric);
       pnt += sizeof r->metric;
 //  }
-    
-OLSR_PRINTF(1, "%u \n", (unsigned int) (pnt-opt));
     
     if (pnt - opt != length) { olsr_exit ("(QUAGGA) length does not match ??? ", EXIT_FAILURE);
      }
