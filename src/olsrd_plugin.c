@@ -20,11 +20,9 @@
 
 #include "olsrd_plugin.h"
 #include "plugin_util.h"
-#include "olsr.h"
 #include "scheduler.h"
 #include "defs.h"
 #include "quagga.h"
-#include "kernel_routes.h"
 #include "net_olsr.h"
 
 #define PLUGIN_NAME    "OLSRD quagga plugin"
