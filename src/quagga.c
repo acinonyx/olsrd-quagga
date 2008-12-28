@@ -297,29 +297,37 @@ void zebra_parse (void* foo __attribute__((unused))) {
 
 // tries to read a packet from zebra_socket
 // if there is something to read - make sure to read whole packages
-static unsigned char *try_read (ssize_t *len) {
-  unsigned char *buf = NULL;
-  ssize_t ret = 0, bsize = 0;
-  uint16_t length = 0, l = 0;
-  int sockstate;
+static unsigned char *try_read (ssize_t *size) {
+  unsigned char *buf;
+  ssize_t bytes, bufsize;
+  uint16_t length, offset;
+  int sockstatus;
 
-  *len = 0;
+  offset = *size = bufsize = 0;
 
-  sockstate = fcntl (zebra.sock, F_GETFL, 0);
-  fcntl (zebra.sock, F_SETFL, sockstate|O_NONBLOCK);
+  /* save socket status and set non-blocking for read */
+  sockstatus = fcntl (zebra.sock, F_GETFL);
+  fcntl (zebra.sock, F_SETFL, sockstatus|O_NONBLOCK);
 
+  /* read whole packages */
   do {
-    if (*len == bsize) {
-      bsize += BUFSIZE;
-      buf = my_realloc (buf, bsize, "Zebra try_read");
+
+  /* (re)allocate buffer */
+    if (*size == bufsize) {
+      bufsize += BUFSIZE;
+      buf = my_realloc (buf, bufsize, "Zebra try_read");
     }
-    ret = read (zebra.sock, buf + *len, bsize - *len);
-    if (!ret) { // nothing more to read, packet is broken, discard!
+
+  /* read from socket */
+    bytes = read (zebra.sock, buf + *size, bufsize - *size);
+  /* handle broken packet */
+    if (!bytes) {
       free (buf);
       return NULL;
     }
-
-    if (ret < 0) {
+  /* handle no data available */
+    if (bytes < 0) {
+  /* handle disconnect */
       if (errno != EAGAIN) { // oops - we got disconnected
         OLSR_PRINTF (1, "(QUAGGA) Disconnected from zebra\n");
         zebra.status &= ~STATUS_CONNECTED;
@@ -328,17 +336,23 @@ static unsigned char *try_read (ssize_t *len) {
       return NULL;
     }
 
-    *len += ret;
-    do {
-      memcpy (&length, buf + l, 2);
-      length = ntohs (length);
-      l += length;
-    } while (*len > l);
-    if (*len < l)
-      fcntl (zebra.sock, F_SETFL, sockstate);
-  } while (*len != l); // GOT FULL PACKAGE!!
+    *size += bytes;
 
-  fcntl (zebra.sock, F_SETFL, sockstate);
+  /* detect zebra packet fragmentation */
+    do {
+      memcpy (&length, buf + offset, sizeof length);
+      length = ntohs (length);
+      offset += length;
+    } while (*size >= (ssize_t) (offset + sizeof length));
+  /* set blocking socket on fragmented packet */
+    if (*size != offset)
+      fcntl (zebra.sock, F_SETFL, sockstatus);
+ 
+  } while (*size != offset);
+
+  /* restore socket status */
+  fcntl (zebra.sock, F_SETFL, sockstatus);
+
   return buf;
 }
 
