@@ -25,6 +25,8 @@
                      olsr_malloc */
 #include "log.h" /* olsr_syslog */
 #include "common/string.h" /* strscpy */
+#include "olsr_ip_prefix_list.h" /* ip_prefix_list_add
+                                    ip_prefix_list_remove */
 
 #include <stdint.h>
 #include <stdlib.h>
