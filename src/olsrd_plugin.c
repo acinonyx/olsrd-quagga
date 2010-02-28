@@ -2,7 +2,7 @@
  * OLSRd Quagga plugin
  *
  * Copyright (C) 2006-2008 Immo 'FaUl' Wehrenberg <immo@chaostreff-dortmund.de>
- * Copyright (C) 2007-2008 Vasilis Tsiligiannis <acinonyxs@yahoo.gr>
+ * Copyright (C) 2007-2010 Vasilis Tsiligiannis <acinonyxs@yahoo.gr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -44,29 +44,33 @@ static set_plugin_parameter set_distance;
 static set_plugin_parameter set_localpref;
 
 
-int olsrd_plugin_interface_version (void) {
+int
+olsrd_plugin_interface_version(void)
+{
   return PLUGIN_INTERFACE_VERSION;
 }
 
 static const struct olsrd_plugin_parameters plugin_parameters[] = {
-  { .name = "redistribute", .set_plugin_parameter = &set_redistribute, },
-  { .name = "ExportRoutes", .set_plugin_parameter = &set_exportroutes, },
-  { .name = "Distance",     .set_plugin_parameter = &set_distance,     },
-  { .name = "LocalPref",    .set_plugin_parameter = &set_localpref,    },
+  {.name = "redistribute",.set_plugin_parameter = &set_redistribute,},
+  {.name = "ExportRoutes",.set_plugin_parameter = &set_exportroutes,},
+  {.name = "Distance",.set_plugin_parameter = &set_distance,},
+  {.name = "LocalPref",.set_plugin_parameter = &set_localpref,},
 };
 
-void olsrd_get_plugin_parameters (const struct olsrd_plugin_parameters **params,
-				  int *size) {
+void
+olsrd_get_plugin_parameters(const struct olsrd_plugin_parameters **params, int *size)
+{
   *params = plugin_parameters;
   *size = ARRAYSIZE(plugin_parameters);
 }
 
-static int set_redistribute (const char *value,
-			     void *data __attribute__((unused)),
-			     set_plugin_parameter_addon addon __attribute__((unused))) {
-  const char *zebra_route_types[] = {"system","kernel","connect",
-					      "static","rip","ripng","ospf",
-					      "ospf6","isis","bgp","hsls"};
+static int
+set_redistribute(const char *value, void *data __attribute__ ((unused)), set_plugin_parameter_addon addon __attribute__ ((unused)))
+{
+  const char *zebra_route_types[] = { "system", "kernel", "connect",
+    "static", "rip", "ripng", "ospf",
+    "ospf6", "isis", "bgp", "hsls"
+  };
   unsigned int i;
 
   for (i = 0; i < ARRAYSIZE(zebra_route_types); i++) {
@@ -77,60 +81,75 @@ static int set_redistribute (const char *value,
   return 0;
 }
 
-static int set_exportroutes (const char *value,
-			     void *data __attribute__((unused)),
-			     set_plugin_parameter_addon addon __attribute__((unused))) {
+static int
+set_exportroutes(const char *value, void *data __attribute__ ((unused)), set_plugin_parameter_addon addon __attribute__ ((unused)))
+{
   if (!strcmp(value, "only")) {
     olsr_addroute_function = zebra_add_route;
     olsr_delroute_function = zebra_del_route;
     zebra_export_routes(1);
-  }
-  else if (!strcmp(value, "additional")) {
+  } else if (!strcmp(value, "additional")) {
     olsr_addroute_function = zebra_add_route;
     olsr_delroute_function = zebra_del_route;
     zebra_export_routes(1);
-  }
-  else zebra_export_routes(0);
+  } else
+    zebra_export_routes(0);
   return 0;
 }
 
-static int set_distance(const char *value, void *data __attribute__((unused)),
-			set_plugin_parameter_addon addon __attribute__((unused))) {
+static int
+set_distance(const char *value, void *data __attribute__ ((unused)), set_plugin_parameter_addon addon __attribute__ ((unused)))
+{
   int distance;
 
-  if (set_plugin_int(value, &distance, addon)) return 1;
-  if (distance < 0 || distance > 255) return 1;
+  if (set_plugin_int(value, &distance, addon))
+    return 1;
+  if (distance < 0 || distance > 255)
+    return 1;
   zebra_olsr_distance(distance);
   return 0;
 }
 
-static int set_localpref(const char *value, void *data __attribute__((unused)),
-			 set_plugin_parameter_addon addon __attribute__((unused))) {
+static int
+set_localpref(const char *value, void *data __attribute__ ((unused)), set_plugin_parameter_addon addon __attribute__ ((unused)))
+{
   int b;
 
-  if (set_plugin_boolean(value, &b, addon)) return 1;
-  if (b) zebra_olsr_localpref();
+  if (set_plugin_boolean(value, &b, addon))
+    return 1;
+  if (b)
+    zebra_olsr_localpref();
   return 0;
 }
 
-
-int olsrd_plugin_init(void) {
-  if(olsr_cnf->ip_version != AF_INET) {
-    fputs("see the source - ipv6 so far not supported\n" ,stderr);
+int
+olsrd_plugin_init(void)
+{
+  if (olsr_cnf->ip_version != AF_INET) {
+    fputs("see the source - ipv6 so far not supported\n", stderr);
     return 1;
   }
 
-  olsr_start_timer(1 * MSEC_PER_SEC, 0, OLSR_TIMER_PERIODIC,
-                   &zebra_parse, NULL, 0);
+  olsr_start_timer(1 * MSEC_PER_SEC, 0, OLSR_TIMER_PERIODIC, &zebra_parse, NULL, 0);
 
   return 0;
 }
 
-static void my_init(void) {
+static void
+my_init(void)
+{
   init_zebra();
 }
 
-static void my_fini(void) {
+static void
+my_fini(void)
+{
   zebra_cleanup();
 }
 
+/*
+ * Local Variables:
+ * c-basic-offset: 2
+ * indent-tabs-mode: nil
+ * End:
+ */
